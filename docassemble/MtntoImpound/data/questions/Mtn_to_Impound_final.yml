@@ -76,7 +76,11 @@ continue button field: Mtn_to_Impound_final_intro
 question: |
    Motion to Impound
 subquestion: |
-   This interview is to prepare a motion that asks the court to prevent the other party from accessing certain information. Please fill out this interview to the best of your ability.
+  ## This interview is to prepare a motion that asks the court to prevent  certain information from being disclosed. 
+  
+  This includes automatically keeping the requested information from being disclosed to the public and from the other party. *Keep in mind that certain persons will still be able to access this information when necessary in the performance of their duties. This includes victim-witness advocates, the judge, and law enforcement officers.*
+  
+  Please review the [Massachusetts Trial Court Rules](https://www.mass.gov/trial-court-rules/trial-court-rule-viii-uniform-rules-on-impoundment-procedure) for more information on the motion and procedure.
 ---
 id: Review your form before you sign it
 continue button field: Mtn_to_Impound_final_preview_question
