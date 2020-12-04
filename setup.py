@@ -44,10 +44,10 @@ def find_package_data(where='.', package='', exclude=standard_exclude, exclude_d
 
 setup(name='docassemble.MtntoImpound',
       version='0.0.1',
-      description=('A docassemble extension.'),
-      long_description='# docassemble.MtntoImpound\n\nA docassemble extension.\n\n## Author\n\nshowie2@su.suffolk.edu\n\n',
+      description=('This Motion is used to ask the court to prevent the other party from accessing certain information'),
+      long_description='# docassemble.MtntoImpound\r\n\r\nA docassemble extension.\r\n\r\n## Author\r\n\r\nshowie2@su.suffolk.edu\r\n\r\n',
       long_description_content_type='text/markdown',
-      author='',
+      author='Sarah Howie',
       author_email='showie2@su.suffolk.edu',
       license='The MIT License (MIT)',
       url='https://docassemble.org',

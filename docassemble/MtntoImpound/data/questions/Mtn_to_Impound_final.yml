@@ -5,9 +5,9 @@ comment: |
   The metadata section controls the tab title and saved interview title. You can delete this section if you include this YAML file in another YAML file.
 metadata:
   title: |
-    Mtn to impound final
+    Motion to Impound 
   short title: |
-    Mtn to impound final
+    Mtn to Impound 
 ---
 comment: |
   This section is used by MAVirtualCourts to control how some of the questions work.
@@ -17,9 +17,9 @@ code: |
   if not defined("interview_metadata['Mtn_to_Impound_final']"):
     interview_metadata.initializeObject('Mtn_to_Impound_final')
   interview_metadata['Mtn_to_Impound_final'].update({
-    'title': 'Mtn to impound final',
-    'short title': 'Mtn to impound final',
-    'description': 'Mtn to impound final',
+    'title': 'Motion to Impound',
+    'short title': 'Mtn to Impound',
+    'description': 'Motion to Impound',
     'original_form': '',
     'allowed courts': [
       'Probate and Family Court',
@@ -71,12 +71,12 @@ code: |
 ---
 comment: |
   This question is used to introduce your interview. Please customize
-id: Mtn to impound final
+id: Mtn to Impound
 continue button field: Mtn_to_Impound_final_intro
 question: |
-  Mtn to impound final
+   Motion to Impound
 subquestion: |
-  Mtn to impound final
+   This interview is to prepare a motion that asks the court to prevent the other party from accessing certain information. Please fill out this interview to the best of your ability.
 ---
 id: Review your form before you sign it
 continue button field: Mtn_to_Impound_final_preview_question
@@ -95,7 +95,12 @@ subquestion: |
   This information lets the court know what information you are seeking to prevent the other party from accessing and why.
 fields:
   - 'What information are you seeking to impound?': impound_list
-    input type: area
+    datatype: checkboxes
+    choices:
+      - Home Address
+      - Work Address
+      - School Address
+      - Telephone Number
   - 'What information can you provide the court as to why this information should  not be shared with the other party?': affidavit_narrative
     input type: area
 ---
