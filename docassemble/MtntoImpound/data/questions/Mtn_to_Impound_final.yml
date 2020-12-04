@@ -1,0 +1,172 @@
+include:
+  - docassemble.MAVirtualCourt:basic-questions.yml
+---
+comment: |
+  The metadata section controls the tab title and saved interview title. You can delete this section if you include this YAML file in another YAML file.
+metadata:
+  title: |
+    Mtn to impound final
+  short title: |
+    Mtn to impound final
+---
+comment: |
+  This section is used by MAVirtualCourts to control how some of the questions work.
+mandatory: True
+code: |
+  interview_metadata # make sure we initialize the object
+  if not defined("interview_metadata['Mtn_to_Impound_final']"):
+    interview_metadata.initializeObject('Mtn_to_Impound_final')
+  interview_metadata['Mtn_to_Impound_final'].update({
+    'title': 'Mtn to impound final',
+    'short title': 'Mtn to impound final',
+    'description': 'Mtn to impound final',
+    'original_form': '',
+    'allowed courts': [
+      'Probate and Family Court',
+    ],
+    'categories': [
+      'Domestic Violence / Safety of self',
+      'Family Law',
+    ],
+    'logic block variable': 'Mtn_to_Impound_final',
+    'attachment block variable': 'Mtn_to_Impound_final_attachment',
+    'typical role': 'unknown',
+  })
+---
+features:
+  navigation: True
+---
+sections:
+  - review_Mtn_to_Impound_final: Review your answers
+---
+id: interview_order_Mtn_to_Impound_final
+code: |
+  # This is a placeholder to control logic flow in this interview
+
+  basic_questions_intro_screen 
+  Mtn_to_Impound_final_intro
+  # Set the allowed courts for this interview
+  allowed_courts = interview_metadata["Mtn_to_Impound_final"]["allowed courts"]
+  nav.set_section('review_Mtn_to_Impound_final')
+  # Below sets the user_role by asking a question.
+  # You can set user_role directly instead to either 'plaintiff' or 'defendant'
+  user_ask_role
+  other_parties[0].address
+  affidavit_narrative
+  delivery_mode
+  # Set the answer file name.
+  set_parts(subtitle=str(users))
+  set_progress(14.29)
+  signature_date
+  courts[0].address.county
+  str(other_parties)
+  set_progress(28.57)
+  str(docket_numbers)
+  str(users)
+  # Save (anonymized) interview statistics.
+  store_variables_snapshot(data={'zip': users[0].address.zip})
+  Mtn_to_Impound_final_preview_question # Pre-canned preview screen
+  basic_questions_signature_flow
+  Mtn_to_Impound_final = True
+---
+comment: |
+  This question is used to introduce your interview. Please customize
+id: Mtn to impound final
+continue button field: Mtn_to_Impound_final_intro
+question: |
+  Mtn to impound final
+subquestion: |
+  Mtn to impound final
+---
+id: Review your form before you sign it
+continue button field: Mtn_to_Impound_final_preview_question
+question: |
+  Review your form before you sign it
+subquestion: |
+  Here is a preview of the form you'll sign on the next page. 
+  
+   ${ pdf_concatenate(Mtn_to_Impound_final_attachment['preview'], filename='Mtn_to_Impound_final.pdf')}
+
+---
+id: Impoundment Information
+question: |
+  Impoundment Information
+subquestion: |
+  This information lets the court know what information you are seeking to prevent the other party from accessing and why.
+fields:
+  - 'What information are you seeking to impound?': impound_list
+    input type: area
+  - 'What information can you provide the court as to why this information should  not be shared with the other party?': affidavit_narrative
+    input type: area
+---
+id: Delivery Information
+question: |
+  How are you delivering the other party with this motion?
+field: delivery_mode
+buttons:
+  - In Person: hand
+  - By Mail: mail
+
+---
+progress: 100
+mandatory: True
+id: Your form is ready to download and file
+question: |
+  Your form is ready to download and file
+subquestion: |
+  Thank you ${users}. Your form is ready to download and deliver.
+  
+  Below is a preview of your form.
+  
+  ${pdf_concatenate(Mtn_to_Impound_final_attachment['final'], filename='Mtn_to_Impound_final.pdf') }
+need: Mtn_to_Impound_final
+attachment code: Mtn_to_Impound_final_attachment['final']
+---
+objects:
+  - Mtn_to_Impound_final_attachment: DADict
+---
+attachment:
+    variable name: Mtn_to_Impound_final_attachment[i]
+    name: Mtn to impound final
+    filename: Mtn_to_impound_final
+    docx template file: Mtn_to_Impound_final.docx
+---
+id: Mtn_to_Impound_final review screen
+event: review_Mtn_to_Impound_final
+question: |
+  Placeholder Review Screen
+subquestion: |
+  Edit your answers below
+review: 
+  - Edit: affidavit_narrative
+    button: |
+      What information can you provide the court as to why this information should not be shared with the other party?:
+      > ${ single_paragraph(affidavit_narrative) }
+  - Edit: impound_list
+    button: |
+      What information are you seeking to impound?:
+      > ${ single_paragraph(impound_list) }
+  - Edit: other_parties[0].address
+    button: |
+      Other Party's address:
+      ${ other_parties[0].address }
+  - Edit: signature_date
+    button: |
+      signature_date:
+      ${ signature_date }
+  - Edit: courts[0].address.county
+    button: |
+      courts[0].address.county:
+      ${ courts[0].address.county }
+  - Edit: other_parties[0].name.first
+    button: |
+      other_parties:
+      ${ other_parties }
+  - Edit: docket_numbers[0].name.first
+    button: |
+      docket_numbers:
+      ${ docket_numbers }
+  - Edit: users[0].name.first
+    button: |
+      users:
+      ${ users }
