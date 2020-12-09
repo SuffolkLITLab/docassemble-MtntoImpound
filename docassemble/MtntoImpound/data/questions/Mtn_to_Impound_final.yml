@@ -51,18 +51,18 @@ code: |
   # Below sets the user_role by asking a question.
   # You can set user_role directly instead to either 'plaintiff' or 'defendant'
   user_ask_role
+  courts[0].address.county
+  str(docket_numbers)
+  str(other_parties)
   other_parties[0].address
   affidavit_narrative
   delivery_mode
+  str(users)
+  signature_date
   # Set the answer file name.
   set_parts(subtitle=str(users))
   set_progress(14.29)
-  signature_date
-  courts[0].address.county
-  str(other_parties)
   set_progress(28.57)
-  str(docket_numbers)
-  str(users)
   # Save (anonymized) interview statistics.
   store_variables_snapshot(data={'zip': users[0].address.zip})
   Mtn_to_Impound_final_preview_question # Pre-canned preview screen
@@ -105,7 +105,7 @@ fields:
       - Work Address
       - School Address
       - Telephone Number
-  - 'What information can you provide the court as to why this information should  not be shared with the other party?': affidavit_narrative
+  - 'In your own words, what information can you provide the court as to why this information should not be shared with the other party?': affidavit_narrative
     input type: area
 ---
 id: Delivery Information
