@@ -59,6 +59,8 @@ code: |
   str(other_parties)
   if len(other_parties) > 0:
     other_parties[0].address
+  else:
+    no_other_parties # event name
   affidavit_narrative
   delivery_mode
   str(users)
@@ -96,6 +98,13 @@ question: |
   Notice: Your case involves co-parties
 subquestion: |
   Please note, this app will help you request that the court keeps **your** information private. *If you have co-parties that also need to keep their information private, have each of them complete this app separately to produce their own motions.*
+---
+continue button field: no_other_parties
+id: No other parties not supported
+question: |
+  Your case involves no opposing parties
+subquestion: |
+  Unfortunately 
 ---
 id: Review your form before you sign it
 continue button field: Mtn_to_Impound_final_preview_question
