@@ -52,10 +52,13 @@ code: |
   # Below sets the user_role by asking a question.
   # You can set user_role directly instead to either 'plaintiff' or 'defendant'
   user_ask_role
+  if len(users) > 1:
+    multiple_users # event name
   trial_court.address.county
   str(docket_numbers)
   str(other_parties)
-  other_parties[0].address
+  if len(other_parties) > 0:
+    other_parties[0].address
   affidavit_narrative
   delivery_mode
   str(users)
@@ -83,7 +86,16 @@ subquestion: |
   
   This includes automatically keeping the requested information from being disclosed to the public and from the other party. *Keep in mind that certain persons will still be able to access this information when necessary in the performance of their duties. This includes victim-witness advocates, the judge, and law enforcement officers.*
   
+  **This interview is only for cases in *Probate and Family Court.***
+  
   Please review the [Massachusetts Trial Court Rules](https://www.mass.gov/trial-court-rules/trial-court-rule-viii-uniform-rules-on-impoundment-procedure) for more information on the motion and procedure.
+---
+continue button field: multiple_users
+id: Notice to multiple users
+question: |
+  Notice: Your case involves co-parties
+subquestion: |
+  Please note, this app will help you request that the court keeps **your** information private. *If you have co-parties that also need to keep their information private, have each of them complete this app separately to produce their own motions.*
 ---
 id: Review your form before you sign it
 continue button field: Mtn_to_Impound_final_preview_question
@@ -135,11 +147,34 @@ help:
     If you are responding to a case or court papers someone else filed, you
     are the "Defendant" or the "Respondent."
 ---
+id: any other users
+question: |
+  Is anyone else on your side of this case?
+subquestion: |
+  % if len(users.elements) > 1:  
+  So far you have told us about ${comma_and_list(users.complete_elements())}.
+  % endif
+fields:
+  - no label: users.there_is_another
+    datatype: yesnoradio
+---
+sets:
+  - users[i].name.first
+  - users[i].name.last
+  - users[i].name.middle
+  - users[i].name.suffix    
+id: other users names
+question: |
+  Who is the ${ ordinal(i) } person on your side of the case?
+fields:
+  - code: |
+      users[i].name_fields()
+---
 id: Impoundment Information
 question: |
   Impoundment Information
 subquestion: |
-  This information lets the court know what information you are seeking to prevent the other party from accessing and why.
+  This information lets the court know what information you are seeking to prevent the other party from accessing.
 fields:
   - 'What information are you seeking to impound?': impound_list
     datatype: checkboxes
@@ -148,8 +183,19 @@ fields:
       - Work Address
       - School Address
       - Telephone Number
-  - 'In your own words, what information can you provide the court as to why this information should not be shared with the other party?': affidavit_narrative
+---
+id: Affidavit Narrative
+question: |
+  Why do you need the court to impound your information?
+subquestion: |
+    Privacy alone is usually not enough. Good reasons for impounding include the information is very sensitive, such as involving sexual assault, or could be very damaging to you or your children, or could be used for reasons that could harm you or your children.
+    
+    Be specific. Include facts about your safety.
+fields:
+  - no label: affidavit_narrative
+    maxlength: 864
     input type: area
+    rows: 5
 ---
 id: Delivery Information
 question: |
