@@ -41,6 +41,7 @@ sections:
   - review_Mtn_to_Impound_final: Review your answers
 ---
 id: interview_order_Mtn_to_Impound_final
+mandatory: True
 code: |
   # This is a placeholder to control logic flow in this interview
 
@@ -54,13 +55,13 @@ code: |
   user_ask_role
   if len(users) > 1:
     multiple_users # event name
-  trial_court.address.county
-  str(docket_numbers)
   str(other_parties)
   if len(other_parties) > 0:
     other_parties[0].address
   else:
     no_other_parties # event name
+  trial_court.address.county
+  str(docket_numbers)
   affidavit_narrative
   delivery_mode
   str(users)
@@ -75,6 +76,7 @@ code: |
     data={'zip': showifdef("users[0].address.zip"), "reached_interview_end": True})
   Mtn_to_Impound_final_preview_question # Pre-canned preview screen
   basic_questions_signature_flow
+  mtn_to_impound_final_download
   Mtn_to_Impound_final = True
 ---
 comment: |
@@ -99,12 +101,12 @@ question: |
 subquestion: |
   Please note, this app will help you request that the court keeps **your** information private. *If you have co-parties that also need to keep their information private, have each of them complete this app separately to produce their own motions.*
 ---
-continue button field: no_other_parties
+event: no_other_parties
 id: No other parties not supported
 question: |
   Your case involves no opposing parties
 subquestion: |
-  Unfortunately 
+  Unfortunately this form can only handle... because.
 ---
 id: Review your form before you sign it
 continue button field: Mtn_to_Impound_final_preview_question
@@ -113,7 +115,7 @@ question: |
 subquestion: |
   Here is a preview of the form you'll sign on the next page. 
   
-   ${ pdf_concatenate(Mtn_to_Impound_final_attachment['preview'], filename='Mtn_to_Impound_final.pdf')}
+   ${ al_court_bundle.as_pdf(key="preview") }
 
 ---
 id: is the user the plaintiff or defendant?
@@ -215,28 +217,49 @@ buttons:
   - By Mail: mail
 
 ---
-progress: 100
-mandatory: True
-id: Your form is ready to download and file
+id: download mtn_to_impound_final
+event: mtn_to_impound_final_download
 question: |
-  Your form is ready to download and file
+  All done
 subquestion: |
   Thank you ${users}. Your form is ready to download and deliver.
   
-  Below is a preview of your form.
+  View, download and send your form below. Click the "Edit answers" button to fix any mistakes.
+
+  ${ action_button_html(url_action('review_mtn_to_impound_final'), label='Edit answers', color='info') }
   
-  ${pdf_concatenate(Mtn_to_Impound_final_attachment['final'], filename='Mtn_to_Impound_final.pdf') }
-need: Mtn_to_Impound_final
-attachment code: Mtn_to_Impound_final_attachment['final']
+  
+  ${ al_user_bundle.download_list_html() }
+  
+
+  ${ al_user_bundle.send_button_html(show_editable_checkbox=True) }
+
+progress: 100
 ---
+# ALDocument objects specify the metadata for each template
 objects:
-  - Mtn_to_Impound_final_attachment: DADict
+  - mtn_to_impound_final_Post_interview_instructions: ALDocument.using(title="Instructions", filename="impound_next_steps.docx", enabled=True, has_addendum=False, default_overflow_message=AL_DEFAULT_OVERFLOW_MESSAGE)
+  - mtn_to_impound_final_attachment: ALDocument.using(title="Mtn to impound final", filename="mtn_to_impound_final", enabled=True, has_addendum=False, default_overflow_message=AL_DEFAULT_OVERFLOW_MESSAGE)
 ---
-attachment:
-    variable name: Mtn_to_Impound_final_attachment[i]
-    name: Mtn to impound final
-    filename: Mtn_to_impound_final
+# Bundles group the ALDocuments into separate downloads, such as for court and for the user
+objects:
+  - al_user_bundle: ALDocumentBundle.using(elements=[mtn_to_impound_final_Post_interview_instructions, mtn_to_impound_final_attachment], filename="mtn_to_impound_final", title="All forms to download for your records", enabled=True)
+  - al_court_bundle: ALDocumentBundle.using(elements=[mtn_to_impound_final_attachment],  filename="mtn_to_impound_final", title="All forms to deliver to court", enabled=True)
+---
+# Each attachment defines a key in an ALDocument. We use `i` as the placeholder here so the same template is 
+# used for "preview" and "final" keys, and logic in the template checks the value of 
+# `i` to show or hide the user's signature
+attachments:
+  - name: Post-interview-Instructions
+    filename: mtn_to_impound_final_next_steps
+    docx template file: impound_next_steps.docx
+    variable name: mtn_to_impound_final_Post_interview_instructions[i]
+  - name: mtn to impound final
+    filename: mtn_to_impound_final
+    variable name: mtn_to_impound_final_attachment[i]
+    skip undefined: True
     docx template file: Mtn_to_Impound_final.docx
+
 ---
 id: Mtn_to_Impound_final review screen
 event: review_Mtn_to_Impound_final
