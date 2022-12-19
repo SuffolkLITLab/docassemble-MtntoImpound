@@ -52,16 +52,23 @@ code: |
   nav.set_section('review_Mtn_to_Impound_final')
   # Below sets the user_role by asking a question.
   # You can set user_role directly instead to either 'plaintiff' or 'defendant'
+  objective
+  if objective == "is_document":
+    error_document # event name
   user_ask_role
   if len(users) > 1:
     multiple_users # event name
   str(other_parties)
   if len(other_parties) > 0:
-    other_parties[0].address
+    # other_parties[0].address
+    pass
   else:
     no_other_parties # event name
+  # plaintiffs
+  # defendants
   trial_court.address.county
-  str(docket_numbers)
+  docket_number
+  impound_list
   affidavit_narrative
   delivery_mode
   str(users)
@@ -86,13 +93,11 @@ continue button field: Mtn_to_Impound_final_intro
 question: |
    Motion to Impound
 subquestion: |
-  ## This interview is to prepare a motion that asks the court to prevent  certain information from being disclosed. 
+  #### This interview is to prepare a motion that asks the court to prevent certain information, **such as your address**, from being disclosed.
   
-  This includes automatically keeping the requested information from being disclosed to the public and from the other party. *Keep in mind that certain persons will still be able to access this information when necessary in the performance of their duties. This includes victim-witness advocates, the judge, and law enforcement officers.*
+  This includes automatically keeping the requested information from being disclosed to the public, and usually opposing parties. *Keep in mind that certain persons will still be able to access this information when necessary in the performance of their duties. This includes victim-witness advocates, the judge, and law enforcement officers.*
   
   **This interview is only for cases in *Probate and Family Court.***
-  
-  Please review the [Massachusetts Trial Court Rules](https://www.mass.gov/trial-court-rules/trial-court-rule-viii-uniform-rules-on-impoundment-procedure) for more information on the motion and procedure.
 ---
 continue button field: multiple_users
 id: Notice to multiple users
@@ -106,7 +111,7 @@ id: No other parties not supported
 question: |
   Your case involves no opposing parties
 subquestion: |
-  Unfortunately this form can only handle... because.
+  Unfortunately this form can only handle cases with an opposing party. If your case involves no opposing party you will need to draft the motion yourself or get help from an attorney.
 ---
 id: Review your form before you sign it
 continue button field: Mtn_to_Impound_final_preview_question
@@ -158,12 +163,30 @@ help:
     If you are responding to a case or court papers someone else filed, you
     are the "Defendant" or the "Respondent."
 ---
+id: your address
+sets:
+  - users[0].address.address
+  - users[0].address.city
+  - users[0].address.zip
+  - users[0].address.unit
+  - users[0].address.state
+  - users[0].address.country
+question: |
+  What is your address?
+subquestion: |
+  This question is optional and is only used to help find the court your case is in. If you already know the court your case is in, you can input gibberish or a random address.
+fields:
+  - code: |
+      users[0].address_fields(country_code=AL_DEFAULT_COUNTRY, default_state=AL_DEFAULT_STATE)
+---
 id: any other users
 question: |
-  Is anyone else on your side of this case?
+  Do you have any co-parties in this case?
 subquestion: |
   % if len(users.elements) > 1:  
   So far you have told us about ${comma_and_list(users.complete_elements())}.
+  % else:
+  Most users do not have any co-parties. If you are not sure, choose no.
   % endif
 fields:
   - no label: users.there_is_another
@@ -180,6 +203,24 @@ question: |
 fields:
   - code: |
       users[i].name_fields()
+---
+id: What are you trying to do
+question: |
+  What are you trying to do?
+fields: 
+  - no label: objective
+    required: True
+    input type: radio
+    choices:
+      - "Keep my **contact information** private from the **other side** of the case": is_contact
+      - "Keep **documents** in my court file hidden from **the public**.": is_document
+---
+id: document not supported
+event: error_document
+question: |
+  Your case involves impoundment of document(s)
+subquestion: |
+  Unfortunately this form can only handle cases involving impoundment of contact information. If your case involves impoundment of document(s) you will need to draft the motion yourself or get help from an attorney.
 ---
 id: Impoundment Information
 question: |
